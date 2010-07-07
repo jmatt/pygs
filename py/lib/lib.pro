@@ -9,16 +9,29 @@ HEADERS += qxtglobalshortcut.h
 
 SOURCES += qxtglobal.cpp \
            qxtglobalshortcut.cpp \
-           qxtglobalshortcut_win.cpp \
 
-# install
-TARGET = pygs
+unix:!macx {
+CONFIG += static
+SOURCES += qxtglobalshortcut_x11.cpp
+}
+
+macx {
+CONFIG += static
+SOURCES += qxtglobalshortcut_mac.cpp
+}
+
+win32 {
+SOURCES += qxtglobalshortcut_win.cpp
 target.path = .
 DESTDIR = .
 sources.files = $$SOURCES test.pro
 sources.path = $$DEPENDPATH
 headers.path = $$DEPENDPATH
 INSTALLS += target sources
+}
+
+# install
+TARGET = pygs
 
 win32:LIBS      += -luser32
 macx:LIBS       += -framework Carbon

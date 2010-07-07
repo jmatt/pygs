@@ -53,10 +53,11 @@ clean :
 		-$(DEL_FILE_RECURSIVE) "py/build"
 		-$(DEL_FILE_RECURSIVE) "py/lib/release"
 		-$(DEL_FILE_RECURSIVE) "py/lib/debug"
-		-$(DEL_FILE) "py/lib/libpygs.a"
+		-$(DEL_FILE) "py/lib/"*.a
+		-$(DEL_FILE) "py/lib/"*.dylib
 		-$(DEL_FILE) "py/lib/pygs.dll"
-		-$(DEL_FILE) "py/lib/*.o"
-		-$(DEL_FILE) "py/lib/*.cpp"
+		-$(DEL_FILE) "py/lib/"*.o
+		-$(DEL_FILE) "py/lib/"*.cpp
 		-$(DEL_FILE) "py/lib/Makefile"
 		-$(DEL_FILE) "py/lib/Makefile.Debug"
 		-$(DEL_FILE) "py/lib/Makefile.Release"
