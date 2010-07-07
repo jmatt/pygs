@@ -1,0 +1,67 @@
+.DEFAULT_GOAL = development
+.PHONY = development stable build clean libqxt-development libqxt-stable
+
+CHK_DIR_EXISTS  = if not exist
+MKDIR		= mkdir
+RMDIR		= rmdir
+COPY		= copy /y
+COPY_FILE	= $(COPY)
+COPY_DIR	= xcopy /s /q /y /i
+DEL_FILE	= del /f /q
+DEL_FILE_RECURSIVE = $(DEL_FILE)
+
+libqxt-development :
+	-$(MKDIR) "libqxt/src/core"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/core/qxtglobal.h -O "libqxt/src/core/qxtglobal.h"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/core/qxtglobal.cpp -O "libqxt/src/core/qxtglobal.cpp"
+	-$(MKDIR) "libqxt/src/gui"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut.cpp -O "libqxt/src/gui/qxtglobalshortcut.cpp"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut.h -O "libqxt/src/gui/qxtglobalshortcut.h"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut_p.h -O "libqxt/src/gui/qxtglobalshortcut_p.h"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut_mac.cpp -O "libqxt/src/gui/qxtglobalshortcut_mac.cpp"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut_win.cpp -O "libqxt/src/gui/qxtglobalshortcut_win.cpp"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut_x11.cpp -O "libqxt/src/gui/qxtglobalshortcut_x11.cpp"
+
+libqxt-stable :
+	-$(MKDIR) "libqxt/src/core"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/core/qxtglobal.h -O "libqxt/src/core/qxtglobal.h"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/core/qxtglobal.cpp -O "libqxt/src/core/qxtglobal.cpp"
+	-$(MKDIR) "libqxt/src/gui"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut.cpp -O "libqxt/src/gui/qxtglobalshortcut.cpp"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut.h -O "libqxt/src/gui/qxtglobalshortcut.h"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut_p.h -O "libqxt/src/gui/qxtglobalshortcut_p.h"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut_mac.cpp -O "libqxt/src/gui/qxtglobalshortcut_mac.cpp"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut_win.cpp -O "libqxt/src/gui/qxtglobalshortcut_win.cpp"
+	wget http://dev.libqxt.org/libqxt/raw/tip/src/gui/qxtglobalshortcut_x11.cpp -O "libqxt/src/gui/qxtglobalshortcut_x11.cpp"
+
+development :	libqxt-development build
+
+stable :	libqxt-stable build
+
+build :		
+		cd py && python configure.py && make Makefile && make install
+		rem
+		rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		rem ~~                           THANKS GOES TO                             ~~
+		rem ~~ PyQt4/SIP from Riverbank Computing Ltd http://riverbankcomputing.com ~~
+		rem ~~ libqxt and Handelsweise http://libqxt.org http://www.handelsweise.de ~~
+		rem ~~ Qt and Nokia http://qt.nokia.com                                     ~~
+		rem ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		rem 
+		rem                        Success! pygs is installed.
+
+clean :		
+		-$(DEL_FILE_RECURSIVE) "py\build"
+		-$(RMDIR) "py\build"
+		-$(DEL_FILE_RECURSIVE) "py\lib\release"
+		-$(RMDIR) "py\lib\release"
+		-$(DEL_FILE_RECURSIVE) "py\lib\debug"
+		-$(RMDIR) "py\lib\debug"
+		-$(DEL_FILE) "py\lib\libpygs.a"
+		-$(DEL_FILE) "py\lib\pygs.dll"
+		-$(DEL_FILE) "py\lib\*.o"
+		-$(DEL_FILE) "py\lib\*.cpp"
+		-$(DEL_FILE) "py\lib\Makefile"
+		-$(DEL_FILE) "py\lib\Makefile.Debug"
+		-$(DEL_FILE) "py\lib\Makefile.Release"
+		-$(DEL_FILE) "py\Makefile"

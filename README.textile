@@ -1,0 +1,48 @@
+_TODO: Add image_
+
+H1. pygs
+
+H2. Overview
+
+pygs is a wrapper for "libqxt's":http://www.libqxt.org/ "QxtGlobalShortcut":http://doc.libqxt.org/tip/qxtglobalshortcut.html.
+
+My aim is to provide cross-platform support for global hotkeys (shortcuts) in python using PyQt4. Ideally I would like to remove the PyQt4 and libqxt dependency but that remains a future goal.
+
+H2. Installation
+
+*Requirements*
+~sufficient not necessary~
+
+# Python 2.6
+# Qt
+# SIP
+# PyQt4
+
+*Mac and Linux*
+
+<code>
+make
+make install
+</code>
+
+*Windows*
+
+
+<code>
+make -f Makefile.windows
+make -f Makefile.windows install
+</code>
+
+H2. Usage
+
+_TODO: Add short example_
+
+H2. License
+
+pygs  - Python bindings to libqxt's QxtGlobalShortcut using SIP and PyQt4. In other words, global hotkeys for PyQt4
+.
+Copyright (C) 2010  J. Matt Peterson
+
+You may use pygs under the terms of the General Public License (GPL) Version 2 or you may contact the author for permission or a commercial license. The commercial license option is specifically provided for those who are unable or unwilling to use the GPL.
+
+http://www.gnu.org/licenses/gpl-2.0.txt
