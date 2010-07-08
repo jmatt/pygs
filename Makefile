@@ -43,15 +43,9 @@ build :
 
 install :
 		cd py && make install
-		echo
-		echo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		echo ~~                           THANKS GOES TO                             ~~
-		echo ~~ PyQt4/SIP from Riverbank Computing Ltd http://riverbankcomputing.com ~~
-		echo ~~ libqxt and Handelsweise http://libqxt.org http://www.handelsweise.de ~~
-		echo ~~ Qt and Nokia http://qt.nokia.com                                     ~~
-		echo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		echo 
-		echo                        Success! pygs is installed.
+		printf "\a"
+		cat make.message
+
 clean :		
 		-$(DEL_FILE_RECURSIVE) "py/build"
 		-$(DEL_FILE_RECURSIVE) "py/lib/release"
