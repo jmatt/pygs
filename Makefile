@@ -1,5 +1,5 @@
 .DEFAULT_GOAL = development
-.PHONY = development stable build clean libqxt-development libqxt-stable
+.PHONY = development stable build clean clean-all clean-downloads libqxt-development libqxt-stable install
 
 CHK_DIR_EXISTS  = test -d
 MKDIR		= mkdir -p
@@ -39,7 +39,10 @@ development :	libqxt-development build
 stable :	libqxt-stable build
 
 build :		
-		cd py && python configure.py && make Makefile && make install
+		cd py && python configure.py && make
+
+install :
+		cd py && make install
 		echo
 		echo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		echo ~~                           THANKS GOES TO                             ~~
@@ -62,3 +65,9 @@ clean :
 		-$(DEL_FILE) "py/lib/Makefile.Debug"
 		-$(DEL_FILE) "py/lib/Makefile.Release"
 		-$(DEL_FILE) "py/Makefile"
+
+clean-all :	clean clean-downloads
+
+clean-downloads:
+		-$(DEL_FILE_RECURSIVE) "libqxt"
+

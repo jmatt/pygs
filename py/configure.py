@@ -1,4 +1,5 @@
 import os
+import shutil
 import sipconfig
 from PyQt4 import pyqtconfig
 
@@ -17,10 +18,13 @@ if not os.path.exists(output_dir):
 os.system("cd lib && qmake && make")
 
 if os.name == 'nt':
-    os.system("cp lib/release/libpygs.a lib")
-    os.system("cp lib/release/pygs.dll lib")
+    shutil.copyfile(os.path.abspath("lib/release/libpygs.a"),
+                    os.path.abspath("lib/libpygs.a"))
+    shutil.copyfile(os.path.abspath("lib/release/pygs.dll"), 
+                    os.path.abspath("lib/pygs.dll"))
     installs = []
-    installs.append([os.path.abspath("lib/release/pygs.dll"), config.sip_mod_dir])
+    installs.append([os.path.abspath("lib/release/pygs.dll"), 
+                     config.sip_mod_dir])
 else:
     installs = []
 
@@ -39,16 +43,6 @@ os.system(command)
 # Create the Makefile.
 makefile = pyqtconfig.QtGuiModuleMakefile(
     config, build_file, dir=output_dir, installs=installs)
-
-# Set it up correctly for msys/mingw shell - not possible yet...
-#if os.name == 'nt' :
-    #if os.environ['MINGW_IN_SHELL'] == '1':
-    #    print "Found MINGW_IN_SHELL = 1"
-    #    makefile.generator="MINGW"
-    #    or try...
-    #    makefile.mkdir = "mkdir -p"
-    #    makefile.rm = "rm"
-    #    makefile.chkdir = "test -d"
 
 makefile.extra_include_dirs.append(os.path.abspath("../libqxt/src/core"))
 makefile.extra_include_dirs.append(os.path.abspath("../libqxt/src/gui"))

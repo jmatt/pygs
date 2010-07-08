@@ -23,6 +23,7 @@ h2. Installation
 To Install
 <code>
 make
+make install
 </code>
 
 *Windows*
@@ -30,6 +31,7 @@ make
 To Install
 <code>
 make -f Makefile.windows
+make -f Makefile.windows install
 </code>
 
 h2. Usage
