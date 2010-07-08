@@ -43,7 +43,6 @@ build :
 
 install :
 		cd py && make install
-		printf("\a")
 		type make.message
 
 clean :		
@@ -62,8 +61,14 @@ clean :
 		-$(DEL_FILE) "py\lib\Makefile.Release"
 		-$(DEL_FILE) "py\Makefile"
 
-clean-all :	clean clean-downloads
-
-clean-downloads:
+clean-downloads :
+		-$(DEL_FILE_RECURSIVE) "libqxt\src\core"
+		-$(RMDIR) "libqxt\src\core"
+		-$(DEL_FILE_RECURSIVE) "libqxt\src\gui"
+		-$(RMDIR) "libqxt\src\gui"
+		-$(DEL_FILE_RECURSIVE) "libqxt\src"
+		-$(RMDIR) "libqxt\src"
 		-$(DEL_FILE_RECURSIVE) "libqxt"
 		-$(RMDIR) "libqxt"
+
+clean-all :	clean clean-downloads
