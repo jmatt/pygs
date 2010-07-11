@@ -1,3 +1,6 @@
+%ModuleCode
+#include "qxtglobalshortcut.h"
+%End
 
 class QxtGlobalShortcut : QObject
 {
@@ -7,11 +10,11 @@ class QxtGlobalShortcut : QObject
 %End
 
 public:
-	QxtGlobalShortcut(QObject* parent = 0);
-	QxtGlobalShortcut(const QKeySequence& shortcut, QObject* parent = 0);
-	~QxtGlobalShortcut();
+	explicit QxtGlobalShortcut(QObject* parent /TransferBack/ = 0);
+	explicit QxtGlobalShortcut(const QKeySequence & shortcut, QObject* parent /TransferBack/ = 0);
+	virtual ~QxtGlobalShortcut();
 	QKeySequence shortcut() const;
-	bool setShortcut(const QKeySequence& shortcut);
+	bool setShortcut(const QKeySequence & shortcut);
 	bool isEnabled() const;
 
 public slots:
@@ -20,6 +23,5 @@ public slots:
 
 signals:
 	void activated();
-
 
 };
