@@ -1,7 +1,6 @@
-!http://dl.dropbox.com/u/750959/pygs_strike.png!
-
 h1. pygs
 
+!http://dl.dropbox.com/u/750959/pygs_strike.png!
 
 h2. Overview
 
