@@ -1,12 +1,16 @@
-_TODO: Add image_
+!http://dl.dropbox.com/u/750959/pygs_strike.png!
 
 h1. pygs
 
+
 h2. Overview
+
+pygs provides cross-platform global hotkey / shortcuts for python using PyQt4.
 
 pygs is a wrapper for "libqxt's":http://www.libqxt.org/ "QxtGlobalShortcut":http://doc.libqxt.org/tip/qxtglobalshortcut.html.
 
-My aim is to provide cross-platform support for global hotkeys (shortcuts) in python using PyQt4. Ideally I would like to remove the PyQt4 and libqxt dependency but that remains a future goal.
+My aim is to provide cross-platform support for global hotkeys (shortcuts) in python. Ideally I would like to remove the PyQt4 and libqxt dependency but that remains a (distant) future goal. I believe it is definitely possible and potentially quite useful though.
+
 
 h2. Installation
 
@@ -23,6 +27,9 @@ h2. Installation
 To Install
 <code>
 make
+</code>
+<br/>
+<code>
 make install
 </code>
 
@@ -31,12 +38,41 @@ make install
 To Install
 <code>
 make -f Makefile.windows
+</code>
+<br/>
+<code>
 make -f Makefile.windows install
 </code>
 
+
 h2. Usage
 
-_TODO: Add short example_
+*See examples/simple.py*
+
+<code>
+python simple.py
+</code>
+
+ctrl+alt+s - activate shortcut
+ctrl+alt+f - quit application
+
+NOTE: ctrl maps to COMMAND on macs!!!! Yeah this is crazy confusing. But it's Qt not me :)
+
+
+h2. Acknowledgements
+
+pygs uses
+
+* "Nokia's":http://www.nokia.com "Qt":http://qt.nokia.com/
+
+* "Riverbank Computing Limited's":http://www.riverbankcomputing.co.uk "SIP":http://www.riverbankcomputing.co.uk/software/sip/intro
+
+* "Riverbank Computing Limited's":http://www.riverbankcomputing.co.uk" PyQt4":http://www.riverbankcomputing.co.uk/software/pyqt/intro
+
+* "libqxt":http://www.libqxt.org/
+
+Thanks!
+
 
 h2. License
 
