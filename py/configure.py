@@ -46,9 +46,10 @@ makefile = pyqtconfig.QtGuiModuleMakefile(
 
 makefile.extra_include_dirs.append(os.path.abspath("../libqxt/src/core"))
 makefile.extra_include_dirs.append(os.path.abspath("../libqxt/src/gui"))
-makefile.extra_lib_dirs.append(sip_files_dir)
+makefile.extra_lib_dirs.append(os.path.abspath(sip_files_dir))
 makefile.extra_lib_dirs.append(os.path.abspath("lib"))
-makefile.extra_libs.append("pygs")
+if os.name == 'nt':
+    makefile.extra_libs.append("pygs")
 
 # Generate the Makefile itself.
 config.pyqt_modules = config.pyqt_modules.split()
