@@ -65,26 +65,6 @@ quint32 QxtGlobalShortcutPrivate::nativeModifiers(Qt::KeyboardModifiers modifier
     return native;
 }
 
-/* From google... Thanks itunesplayer.cpp
- */
-static QString CFStringToQString(CFStringRef s)
-{
-  QString result;
-
-  if (s != NULL) {
-    CFIndex length = 2*(CFStringGetLength(s) + 1); // Worst case for UTF8
-    char* buffer = new char[length];
-    if (CFStringGetCString(s, buffer, length, kCFStringEncodingUTF8)) {
-      result = QString::fromUtf8(buffer);
-    }
-    else {
-      qWarning("qxtglobalshortcut_mac.cpp: CFString conversion failed.");
-    }
-    delete buffer;
-  } 
-  return result;
-}    
-
 /* Returns string representation of key, if it is printable.
  * Ownership follows the Create Rule; that is, it is the caller's
  * responsibility to release the returned object. */
@@ -153,7 +133,6 @@ CGKeyCode keyCodeForChar(const char c)
     /* Our values may be NULL (0), so we need to use this function. */
     if (!CFDictionaryGetValueIfPresent(charToCodeDict, charStr,
                                        (const void **)&code)) {
-      qWarning() << "Value not present in dictionary" << CFStringToQString(charStr);
       code = UINT16_MAX;
     }
 
