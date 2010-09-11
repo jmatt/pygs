@@ -153,7 +153,8 @@ CGKeyCode keyCodeForChar(const char c)
     /* Our values may be NULL (0), so we need to use this function. */
     if (!CFDictionaryGetValueIfPresent(charToCodeDict, charStr,
                                        (const void **)&code)) {
-        code = UINT16_MAX;
+      qWarning() << "Value not present in dictionary" << CFStringToQString(charStr);
+      code = UINT16_MAX;
     }
 
     CFRelease(charStr);
