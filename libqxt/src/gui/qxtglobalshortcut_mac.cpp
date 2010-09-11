@@ -165,7 +165,6 @@ CGKeyCode keyCodeForChar(const char c)
 quint32 QxtGlobalShortcutPrivate::nativeKeycode(Qt::Key key)
 {
     UTF16Char ch;
-    quint32 kc = 9;
     // Constants found in NSEvent.h from AppKit.framework
     if (key == Qt::Key_Up)			ch = 0xF700;
     else if (key == Qt::Key_Down)		ch = 0xF701;
@@ -195,11 +194,8 @@ quint32 QxtGlobalShortcutPrivate::nativeKeycode(Qt::Key key)
     else if (key == Qt::Key_Tab)		ch = 9;
     else					ch = key;
 #if defined(QT_MAC_USE_COCOA)
-    //qWarning() << "QxtGlobalShortcut toLower char: " << QChar::toLower(ch);
     CGKeyCode macKeyCode = keyCodeForChar(QChar::toLower(ch));
-    //qWarning() << "QxtGlobalShortcut macKeyCode: " << macKeyCode;
-      return macKeyCode;
-
+    return macKeyCode;
 #else
     KeyboardLayoutRef layout;
     KeyboardLayoutKind layoutKind;
