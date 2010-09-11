@@ -129,8 +129,6 @@ CGKeyCode keyCodeForChar(const char c)
     UniChar character = c;
     CFStringRef charStr = NULL;
 
-    return UINT16_MAX;
-
     /* Generate table of keycodes and characters. */
     if (charToCodeDict == NULL) {
         size_t i;
