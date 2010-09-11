@@ -65,9 +65,107 @@ quint32 QxtGlobalShortcutPrivate::nativeModifiers(Qt::KeyboardModifiers modifier
     return native;
 }
 
+/* From google... Thanks itunesplayer.cpp
+ */
+static QString CFStringToQString(CFStringRef s)
+{
+  QString result;
+
+  if (s != NULL) {
+    CFIndex length = 2*(CFStringGetLength(s) + 1); // Worst case for UTF8
+    char* buffer = new char[length];
+    if (CFStringGetCString(s, buffer, length, kCFStringEncodingUTF8)) {
+      result = QString::fromUtf8(buffer);
+    }
+    else {
+      qWarning("qxtglobalshortcut_mac.cpp: CFString conversion failed.");
+    }
+    delete buffer;
+  } 
+  return result;
+}    
+
+/* Returns string representation of key, if it is printable.
+ * Ownership follows the Create Rule; that is, it is the caller's
+ * responsibility to release the returned object. */
+CFStringRef createStringForKey(CGKeyCode keyCode)
+{
+    TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
+    CFDataRef layoutData =
+      (CFDataRef)TISGetInputSourceProperty(currentKeyboard,
+                                  kTISPropertyUnicodeKeyLayoutData);
+    const UCKeyboardLayout *keyboardLayout =
+        (const UCKeyboardLayout *)CFDataGetBytePtr(layoutData);
+
+    UInt32 keysDown = 0;
+    UniChar chars[4];
+    UniCharCount realLength;
+
+    UCKeyTranslate(keyboardLayout,
+                   keyCode,
+                   kUCKeyActionDisplay,
+                   0,
+                   LMGetKbdType(),
+                   kUCKeyTranslateNoDeadKeysBit,
+                   &keysDown,
+                   sizeof(chars) / sizeof(chars[0]),
+                   &realLength,
+                   chars);
+    CFRelease(currentKeyboard);    
+
+    return CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
+}
+
+/* Returns key code for given character via the above function, or UINT16_MAX
+ * on error. 
+ *
+ * Created by meeselet (http://stackoverflow.com/users/217476/meeselet)
+ * From: http://stackoverflow.com/questions/1918841/how-to-convert-ascii-character-to-cgkeycode
+ */
+CGKeyCode keyCodeForChar(const char c)
+{
+    static CFMutableDictionaryRef charToCodeDict = NULL;
+    CGKeyCode code;
+    UniChar character = c;
+    CFStringRef charStr = NULL;
+
+    return UINT16_MAX;
+
+    /* Generate table of keycodes and characters. */
+    if (charToCodeDict == NULL) {
+        size_t i;
+        charToCodeDict = CFDictionaryCreateMutable(kCFAllocatorDefault,
+                                                   128,
+                                                   &kCFCopyStringDictionaryKeyCallBacks,
+                                                   NULL);
+	if (charToCodeDict == NULL) return UINT16_MAX;
+
+        /* Loop through every keycode (0 - 127) to find its current mapping. */
+        for (i = 0; i < 128; ++i) {
+            CFStringRef string = createStringForKey((CGKeyCode)i);
+            if (string != NULL) {
+                CFDictionaryAddValue(charToCodeDict, string, (const void *)i);
+                CFRelease(string);
+            }
+        }
+    }
+
+    charStr = CFStringCreateWithCharacters(kCFAllocatorDefault, &character, 1);
+
+    /* Our values may be NULL (0), so we need to use this function. */
+    if (!CFDictionaryGetValueIfPresent(charToCodeDict, charStr,
+                                       (const void **)&code)) {
+        code = UINT16_MAX;
+    }
+
+    CFRelease(charStr);
+    return code;
+}  
+
 quint32 QxtGlobalShortcutPrivate::nativeKeycode(Qt::Key key)
 {
     UTF16Char ch;
+    quint32 kc = 9;
     // Constants found in NSEvent.h from AppKit.framework
     if (key == Qt::Key_Up)			ch = 0xF700;
     else if (key == Qt::Key_Down)		ch = 0xF701;
@@ -96,78 +194,12 @@ quint32 QxtGlobalShortcutPrivate::nativeKeycode(Qt::Key key)
     else if (key == Qt::Key_Enter)		ch = 3;
     else if (key == Qt::Key_Tab)		ch = 9;
     else					ch = key;
+#if defined(QT_MAC_USE_COCOA)
+    //qWarning() << "QxtGlobalShortcut toLower char: " << QChar::toLower(ch);
+    CGKeyCode macKeyCode = keyCodeForChar(QChar::toLower(ch));
+    //qWarning() << "QxtGlobalShortcut macKeyCode: " << macKeyCode;
+      return macKeyCode;
 
-#ifndef QT_MAC_USE_COCOA
-    // KeyboardLayoutRef layout;
-    // KeyboardLayoutKind layoutKind;
-
-    // KLGetCurrentKeyboardLayout(&layout);
-    // KLGetKeyboardLayoutProperty(layout, kKLKind, const_cast<const void**>(reinterpret_cast<void**>(&layoutKind)));
-
-    // if (layoutKind == kKLKCHRKind)
-    // { // no Unicode available
-    //     if (ch > 255) return 0;
-
-    //     char* data;
-    //     KLGetKeyboardLayoutProperty(layout, kKLKCHRData, const_cast<const void**>(reinterpret_cast<void**>(&data)));
-    //     int ct = *reinterpret_cast<short*>(data + 258);
-    //     for (int i = 0; i < ct; i++)
-    //     {
-    //         char* keyTable = data + 260 + 128 * i;
-    //         for (int j = 0; j < 128; j++)
-    //         {
-    //             if (keyTable[j] == ch) return j;
-    //         }
-    //     }
-
-    //     return 0;
-    // }
-
-    // char* data;
-    // KLGetKeyboardLayoutProperty(layout, kKLuchrData, const_cast<const void**>(reinterpret_cast<void**>(&data)));
-    // UCKeyboardLayout* header = reinterpret_cast<UCKeyboardLayout*>(data);
-    // UCKeyboardTypeHeader* table = header->keyboardTypeList;
-
-    TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
-    CFDataRef layoutData = TISGetInputSourceProperty(currentKeyboard,
-    						     kTISPropertyUnicodeKeyLayoutData);
-    
-    const UCKeyboardLayout* uchrHeader = reinterpret_cast<UCKeyboardLayout*>(layoutData);
-    UCKeyboardTypeHeader* table = uchrHeader->keyboardTypeList;
-
-    for (quint32 i=0; i < uchrHeader->keyboardTypeCount; i++)
-    {
-        UCKeyStateRecordsIndex* stateRec = 0;
-        if (table[i].keyStateRecordsIndexOffset != 0)
-        {
-            stateRec = reinterpret_cast<UCKeyStateRecordsIndex*>(data + table[i].keyStateRecordsIndexOffset);
-            if (stateRec->keyStateRecordsIndexFormat != kUCKeyStateRecordsIndexFormat) stateRec = 0;
-        }
-
-        UCKeyToCharTableIndex* charTable = reinterpret_cast<UCKeyToCharTableIndex*>(data + table[i].keyToCharTableIndexOffset);
-        if (charTable->keyToCharTableIndexFormat != kUCKeyToCharTableIndexFormat) continue;
-
-        for (quint32 j=0; j < charTable->keyToCharTableCount; j++)
-        {
-            UCKeyOutput* keyToChar = reinterpret_cast<UCKeyOutput*>(data + charTable->keyToCharTableOffsets[j]);
-            for (quint32 k=0; k < charTable->keyToCharTableSize; k++)
-            {
-                if (keyToChar[k] & kUCKeyOutputTestForIndexMask)
-                {
-                    long idx = keyToChar[k] & kUCKeyOutputGetIndexMask;
-                    if (stateRec && idx < stateRec->keyStateRecordCount)
-                    {
-                        UCKeyStateRecord* rec = reinterpret_cast<UCKeyStateRecord*>(data + stateRec->keyStateRecordOffsets[idx]);
-                        if (rec->stateZeroCharData == ch) return k;
-                    }
-                }
-                else if (!(keyToChar[k] & kUCKeyOutputSequenceIndexMask) && keyToChar[k] < 0xFFFE)
-                {
-                    if (keyToChar[k] == ch) return k;
-                }
-            } // for k
-        } // for j
-    } // for i
 #else
     KeyboardLayoutRef layout;
     KeyboardLayoutKind layoutKind;
